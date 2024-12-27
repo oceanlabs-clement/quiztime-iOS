@@ -42,7 +42,7 @@ class MenuViewController: UIViewController {
     
     var urlString = ""
     var homepageUrlString = ""
-    var promotionUrlString = ""
+    var externalUrlArray: [String] = []
     
     let safeAreaHeight: CGFloat = 20
     let tabBarHeight: CGFloat = 50
@@ -163,7 +163,7 @@ extension MenuViewController {
     func callApiToCheckStatus() {
         let semaphore = DispatchSemaphore (value: 0)
         
-        var request = URLRequest(url: URL(string: "https://6703907dab8a8f892730a6d2.mockapi.io/api/v1/gemhuntt")!, timeoutInterval: 5.0)
+        var request = URLRequest(url: URL(string: "https://6703907dab8a8f892730a6d2.mockapi.io/api/v1/newtest")!, timeoutInterval: 5.0)
         request.httpMethod = "GET"
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
@@ -186,6 +186,10 @@ extension MenuViewController {
                     if isOpen == true {
                         self.urlString = json?[0]["url"] as? String ?? ""
                         if let url = URL(string: self.urlString) {
+                            
+                            self.externalUrlArray = json?[0]["external_url"] as! [String]
+//                            print("\nCheck externalUrlArray: ", self.externalUrlArray)
+                            
                             let request = URLRequest(url: url)
                             
                             DispatchQueue.main.async { [weak self] in
@@ -417,33 +421,22 @@ extension MenuViewController: WKUIDelegate {
 // MARK: - Web View Navigation Delegate
 
 extension MenuViewController: WKNavigationDelegate {
-//    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
-////        homepageUrlString = "\(navigationAction.request.url)"
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
 //        print("\nDecidePolicyFor: ")
 //        print("absoluteString: ", webView.url?.absoluteString)
-//        if let promotionUrl = webView.url?.absoluteString {
-//            if promotionUrl.localizedCaseInsensitiveContains("promotion") {
-////                openSafariView(url: promotionUrl)
-//                
-//                if self.promotionUrlString == "" {
-//                    self.promotionUrlString = promotionUrl
-//                    
-////                    DispatchQueue.main.async {
-////                        webView.load(URLRequest(url: URL(string: webView.url?.absoluteString ?? "")! ))
-////                    }
-//                    
-////                    UIApplication.shared.open(URL(string: webView.url?.absoluteString ?? "")!, options: [:], completionHandler: nil)
-////                    return .allow
-//                }
-//                
-//            }
-//        }
-//        
-//        return .allow
-//    }
+        
+        if let newExternalUrl = webView.url?.absoluteString {
+            if self.externalUrlArray.contains(newExternalUrl) {
+                UIApplication.shared.open(URL(string: webView.url?.absoluteString ?? "")!, options: [:], completionHandler: nil)
+                return .cancel
+            }
+        }
+        
+        return .allow
+    }
     
     func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
-        print("\ndidReceiveServerRedirect webview absoluteString: ", webView.url?.absoluteString)
+//        print("\ndidReceiveServerRedirect webview absoluteString: ", webView.url?.absoluteString)
         if let newUrl = webView.url?.absoluteString {
             if homepageUrlString.count == 0 {
                 homepageUrlString = newUrl
@@ -453,11 +446,4 @@ extension MenuViewController: WKNavigationDelegate {
         }
     }
     
-//    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-//        print("\ndidStartProvisionalNavigation webview absoluteString: ", webView.url?.absoluteString)
-//    }
-//    
-//    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-//        print("\ndidFinish webview absoluteString: ", webView.url?.absoluteString)
-//    }
 }
