@@ -87,7 +87,7 @@ class EmojiGuessingViewController: UIViewController {
         let backgroundImage = UIImageView(image: UIImage(named: "background_game"))
         backgroundImage.contentMode = .scaleAspectFill
         backgroundImage.frame = view.bounds
-        backgroundImage.alpha = 0.3
+        backgroundImage.alpha = 0.5
         view.addSubview(backgroundImage)
         view.sendSubviewToBack(backgroundImage)
 
@@ -111,8 +111,8 @@ class EmojiGuessingViewController: UIViewController {
 
         // Hint label (multi-line support)
         hintLabel = UILabel()
-        hintLabel.text = "Guess the emoji!"
-        hintLabel.font = UIFont.boldSystemFont(ofSize: 24)  // Bigger and bold
+        hintLabel.text = "" // "Guess the emoji!"
+        hintLabel.font = UIFont.boldSystemFont(ofSize: 22)  // Bigger and bold
         hintLabel.textColor = .white
         hintLabel.textAlignment = .center
         hintLabel.numberOfLines = 0  // Allows multiple lines
@@ -239,7 +239,7 @@ class EmojiGuessingViewController: UIViewController {
             resultLabel.text = "Correct!"
             score += 10
         } else {
-            resultLabel.text = "Wrong! The correct emoji is \(correctEmoji)"
+            resultLabel.text = "Wrong! The correct answer is \(correctEmoji)"
         }
 
         // Update score
